@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "parser-sitesoft"
+version = "0.1.0"
+description = ""
+authors = ["Daniil Gilmutdinov <fregire@yandex.ru>"]
+readme = "README.md"
+packages = [{include = "parser_sitesoft"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.31.0"
+beautifulsoup4 = "^4.12.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
