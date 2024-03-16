@@ -1,41 +1,33 @@
-import requests
-from bs4 import BeautifulSoup
-import re
+from src.app import App
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
+from dotenv import load_dotenv
+from src.settings.postgres_settings import PostgresSettings
+import asyncio
 
-HUB_URL = 'https://habr.com'
 
-def article_link_filter(href):
-    return href and not re.compile("comments").search(href) and re.compile("articles").search(href
-                                                                                            )
+async def close():
+    print('Closing...')
+    await asyncio.sleep(1)
+
+
 def main():
-    response = requests.get(HUB_URL)
-    html_page = response.text
-    soup = BeautifulSoup(html_page, "html.parser")
+    load_dotenv()
+    postgres_settings = PostgresSettings()
+    async_engine = create_async_engine(postgres_settings.get_async_url(), pool_pre_ping=True)
+    HUB_URL = 'https://habr.com'
+    SLEEP_IN_SECONDS = 600
 
-    article_links = set()
-    for link in soup.find_all(href=article_link_filter):
-        href = link.get("href")
-        absolute_url = '{}{}'.format(HUB_URL, href)
-        article_links.add(absolute_url)
+    loop = asyncio.get_event_loop()
 
-    for article_link in article_links:
-        response = requests.get(article_link)
-        html_page = response.text
-        soup = BeautifulSoup(html_page, "html.parser")
-
-        headline = soup.find("h1", attrs={"class": "tm-title tm-title_h1"}).find("span").text
-        publish_date = soup.find("span", attrs={"class": "tm-article-datetime-published"}).find("time")["datetime"]
-        author_link = soup.find("a", attrs={"class": "tm-user-info__username"})
-        author_name = author_link.text.strip()
-        author_link = '{}{}'.format(HUB_URL, author_link["href"])
-        print("--------")
-        print("Заголовок:", headline)
-        print("Дата:", publish_date)
-        print("Ссылка на пост:", article_link)
-        print("Имя автора:", author_name)
-        print("Ссылка на пост:", author_link)
-        print("--------")
-
+    try:
+        app = App(engine=async_engine, hub=HUB_URL, parse_timeout=SLEEP_IN_SECONDS)
+        loop.run_until_complete(app.start())
+    except KeyboardInterrupt:
+        loop.run_until_complete(close())
+        if app:
+            loop.run_until_complete(app.stop())
+    finally:
+        print("Program finished")
 
 
 if __name__ == '__main__':
