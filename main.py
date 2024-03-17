@@ -1,5 +1,5 @@
 from src.app import App
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine
+from sqlalchemy.ext.asyncio import create_async_engine
 from dotenv import load_dotenv
 from src.settings.postgres_settings import PostgresSettings
 import asyncio

@@ -1,11 +1,9 @@
 import asyncio
-
 from src.hub_parser import  HubParser
 from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, AsyncSession
-import time
 from src.models import Article, Hub
 from src.schemas.article import GetArticleFilters
-from src.utils import get_async_session
+import traceback
 
 
 class App:
@@ -56,7 +54,8 @@ class App:
                         await session.close()
         except Exception as e:
             print(f"Problem with hub: {hub}")
-            print(e)
+            print(traceback.format_exc())
+
 
     async def stop(self):
         print("App stopping")

@@ -1,6 +1,6 @@
-from typing import AsyncGenerator
-from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import AsyncEngine, async_sessionmaker
 import aiohttp
+from src.exceptions import UrlUnavailableException
 
 
 async def get_async_session(engine: AsyncEngine):
@@ -12,4 +12,7 @@ async def get_async_session(engine: AsyncEngine):
 async def get_page(url) -> str:
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
+            if response.status > 499:
+                raise UrlUnavailableException()
+
             return await response.text()
