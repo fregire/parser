@@ -45,7 +45,7 @@ class HubParser:
 
     async def __process_article_and_catch_error(self, article_link: str):
         try:
-            await self.__process_article_page(article_link=article_link)
+            return await self.__process_article_page(article_link=article_link)
         except UrlUnavailableException:
             print(f"{article_link} for hub: {self.hub} is unavailable right now")
 

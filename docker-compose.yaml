@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  hub-parser:
+    build: .
+    container_name: hub-parser
+    command: python3 main.py
+    tty: true
+    restart: unless-stopped
+    environment:
+      PG_USERNAME: ${PG_USERNAME:-postgres}
+      PG_PASSWORD: ${PG_PASSWORD:-postgres}
+      PG_DATABASE: ${PG_DATABASE:-hub-parser}
+      PG_HOST: ${PG_HOST:-192.168.0.101}
+      PG_PORT: ${PG_PORT:-5432}
+    volumes:
+      - ./src:/home/app/src

@@ -1,23 +1,22 @@
 [tool.poetry]
-name = "parser-sitesoft"
+name = "src"
 version = "0.1.0"
 description = ""
 authors = ["Daniil Gilmutdinov <fregire@yandex.ru>"]
 readme = "README.md"
-packages = [{include = "parser_sitesoft"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-requests = "^2.31.0"
-beautifulsoup4 = "^4.12.3"
-sqlalchemy = "^2.0.28"
-pydantic = "^2.6.4"
-pydantic-settings = "^2.2.1"
-alembic = "^1.13.1"
-psycopg2-binary = "^2.9.9"
-asyncpg = "^0.29.0"
-greenlet = "^3.0.3"
-aiohttp = "^3.9.3"
+requests = "2.31.0"
+beautifulsoup4 = "4.12.3"
+sqlalchemy = "2.0.28"
+pydantic = "2.6.4"
+pydantic-settings = "2.2.1"
+alembic = "1.13.1"
+psycopg2-binary = "2.9.9"
+asyncpg = "0.29.0"
+greenlet = "3.0.3"
+aiohttp = "3.9.3"
 
 
 [build-system]

@@ -50,6 +50,8 @@ class App:
                         if not await Article.get_article(filters=GetArticleFilters(link=article.link), session=session):
                             await Article.create_article(create_data=article, session=session)
                             await session.commit()
+                    except Exception as e:
+                        print(e)
                     finally:
                         await session.close()
         except Exception as e:
