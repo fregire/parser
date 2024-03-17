@@ -12,7 +12,7 @@ class App:
     def __init__(self, engine: AsyncEngine, parse_timeout: int):
         self.engine = engine
         self.parse_timeout = parse_timeout
-        self.sleep_timeout = 5
+        self.wait_hubs_timeout = 5
 
     async def start(self):
         while True:
@@ -20,7 +20,7 @@ class App:
             has_hubs = await self.__process()
             if not has_hubs:
                 print("Cant find any hubs to process")
-                await asyncio.sleep(self.sleep_timeout)
+                await asyncio.sleep(self.wait_hubs_timeout)
             else:
                 print("Waiting for next parsing")
                 await asyncio.sleep(self.parse_timeout)
@@ -41,7 +41,7 @@ class App:
         return True
 
     async def __process_hub(self, hub: str, session: AsyncSession):
-        articles = HubParser(hub).parse()
+        articles = await HubParser(hub).parse()
         for article in articles:
             try:
                 if not await Article.get_article(filters=GetArticleFilters(link=article.link), session=session):
