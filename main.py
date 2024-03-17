@@ -22,7 +22,6 @@ async def close():
 def init_app() -> App:
     postgres_settings = PostgresSettings()
     async_engine = create_async_engine(postgres_settings.get_async_url(), pool_pre_ping=True)
-    HUB_URL = 'https://habr.com'
     SLEEP_IN_SECONDS = 600
 
     return App(engine=async_engine, parse_timeout=SLEEP_IN_SECONDS)

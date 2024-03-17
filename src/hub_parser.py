@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 
 import re
@@ -23,14 +24,13 @@ class HubParser:
                 href = link.get("href")
                 article_links.add(href)
 
-            result = []
-
+            tasks = []
             for article_link in article_links:
-                print("--------")
-                await self.__process_article_page(article_link=article_link, url_session=session)
-                print("--------")
+                tasks.append(self.__process_article_page(article_link=article_link, url_session=session))
 
-        return result
+            tasks_done = await asyncio.gather(*tasks)
+            return [task_done for task_done in tasks_done if task_done]
+
 
     def __article_link_filter(self, href):
         return href and not re.compile("comments").search(href) and re.compile(r"(articles\/)\d+").search(href)

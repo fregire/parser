@@ -15,6 +15,7 @@ class App:
         self.wait_hubs_timeout = 5
 
     async def start(self):
+        print("App started")
         while True:
             print("Getting hubs...")
             has_hubs = await self.__process()
@@ -34,21 +35,29 @@ class App:
         if not hubs:
             return False
 
+        tasks = []
         for hub in hubs:
-            async with async_session() as session:
-                await self.__process_hub(hub=hub.hub, session=session)
+            tasks.append(self.__process_hub(hub=hub.hub, async_session=async_session))
+
+        await asyncio.gather(*tasks, return_exceptions=False)
 
         return True
 
-    async def __process_hub(self, hub: str, session: AsyncSession):
-        articles = await HubParser(hub).parse()
-        for article in articles:
-            try:
-                if not await Article.get_article(filters=GetArticleFilters(link=article.link), session=session):
-                    await Article.create_article(create_data=article, session=session)
-                    await session.commit()
-            finally:
-                await session.close()
+    async def __process_hub(self, hub: str, async_session: async_sessionmaker[AsyncSession]):
+        try:
+            async with async_session() as session:
+                articles = await HubParser(hub).parse()
+                for article in articles:
+                    try:
+                        if not await Article.get_article(filters=GetArticleFilters(link=article.link), session=session):
+                            await Article.create_article(create_data=article, session=session)
+                            await session.commit()
+                    finally:
+                        await session.close()
+        except Exception as e:
+            print(f"Problem with hub: {hub}")
+            print(e)
 
     async def stop(self):
+        print("App stopping")
         await self.engine.dispose()
