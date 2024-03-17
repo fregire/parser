@@ -34,7 +34,13 @@ def upgrade() -> None:
 
         sa.Column("created_at", DateTime, server_default=func.now(), nullable=False),
     )
+    op.create_table(
+        "hub",
+        sa.Column("hub", String, primary_key=True, nullable=False),
+        sa.Column("created_at", DateTime, server_default=func.now(), nullable=False),
+    )
 
 
 def downgrade() -> None:
     op.drop_table("article")
+    op.drop_table("hub")
